@@ -100,6 +100,7 @@ int main() {
         handleEvents(&window);
         handleInput(&window);
         update(&window);
+        simulatePhysics();
         draw(&window);
     }
 }
