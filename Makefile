@@ -5,7 +5,7 @@ LIBS = -lsfml-graphics -lsfml-window -lsfml-system -lBox2D
 OBJ = main.o            \
       chunk.o           \
       chunkManager.o    \
-	  midpointDisplacement.o
+      midpointDisplacement.o
 HEADERS = $(wildcard headers/*.h)
 EXEC = sideMiner
 
