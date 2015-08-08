@@ -97,10 +97,10 @@ int main() {
         }
         framesForFps++;
 
+        simulatePhysics();
         handleEvents(&window);
         handleInput(&window);
         update(&window);
-        simulatePhysics();
         draw(&window);
     }
 }

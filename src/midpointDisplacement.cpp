@@ -21,8 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 double *normalizedMidpointDisplacement(int size, double h) {
     double *values = midpointDisplacement(size, h);
 
-    // for (int i = 0; i < size; i++) std::cout << values[i] << " ";
-
     normalizeValues(values, size);
 
     return values;

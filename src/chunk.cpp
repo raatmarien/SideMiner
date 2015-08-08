@@ -102,7 +102,6 @@ char Chunk::getTile(Vector2i positionInChunk) {
 
 void Chunk::moveInFocus() {
     if (!inFocus) {
-        // std::cout << "In\n";
         inFocus = true;
         chunkBody = world->CreateBody(&bodyDef);
 
@@ -127,7 +126,6 @@ void Chunk::moveInFocus() {
 
 void Chunk::moveOutFocus() {
     if (inFocus) {
-        // std::cout << "Move out focus\n";
         inFocus = false;
         world->DestroyBody(chunkBody);
     } 
