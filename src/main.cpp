@@ -172,7 +172,7 @@ void setupChunkManager() {
     chunkSettings.world = &world;
 
     WorldSettings worldSettings;
-    worldSettings.worldSize = Vector2i(160, 80);
+    worldSettings.worldSize = Vector2i(16, 8);
     worldSettings.chunkTexture = &blocksTexture;
     worldSettings.chunkSettings = chunkSettings;
 
