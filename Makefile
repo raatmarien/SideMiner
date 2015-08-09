@@ -2,10 +2,12 @@ VPATH = src
 CC = g++
 CFLAG = -I headers --std=c++11
 LIBS = -lsfml-graphics -lsfml-window -lsfml-system -lBox2D
-OBJ = main.o            \
-      chunk.o           \
-      chunkManager.o    \
-      midpointDisplacement.o
+OBJ = main.o                 \
+      chunk.o                \
+      chunkManager.o         \
+      midpointDisplacement.o \
+	  walker.o               \
+	  player.o
 HEADERS = $(wildcard headers/*.h)
 EXEC = sideMiner
 

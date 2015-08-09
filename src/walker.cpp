@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace sf;
 
-Walker::Walker(Vector2f startPosition, WalkerSettings *settings
+Walker::Walker(Vector2f startPosition, WalkerSettings settings
                , b2World *world) {
     this->settings = settings;
     this->world = world;
@@ -27,15 +27,15 @@ Walker::Walker(Vector2f startPosition, WalkerSettings *settings
     // Create appropiate body
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(startPosition.x / settings->scale
-                         , startPosition.y / settings->scale);
+    bodyDef.position.Set(startPosition.x / this->settings.scale
+                         , startPosition.y / this->settings.scale);
     bodyDef.fixedRotation = true;
 
     body = world->CreateBody(&bodyDef);
 
     b2PolygonShape bodyBox;
-    bodyBox.SetAsBox(settings->size.x / (2.0f * settings->scale)
-                     , settings->size.y / (2.0f * settings->scale));
+    bodyBox.SetAsBox(this->settings.size.x / (2.0f * this->settings.scale)
+                     , this->settings.size.y / (2.0f * this->settings.scale));
 
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &bodyBox;
@@ -46,17 +46,17 @@ Walker::Walker(Vector2f startPosition, WalkerSettings *settings
 }
 
 void Walker::walk(bool right) {
-    body->ApplyForce(b2Vec2((right ? 1 : -1) * settings->speed, 0)
+    body->ApplyForce(b2Vec2((right ? 1 : -1) * settings.speed, 0)
                      , body->GetWorldCenter(), true);
 }
 
 void Walker::jump() {
-    body->ApplyForce(b2Vec2(0, -settings->jumpStrength)
+    body->ApplyForce(b2Vec2(0, -settings.jumpStrength)
                      , body->GetWorldCenter(), true);
 }
 
 Vector2f Walker::getPosition() {
     b2Vec2 bodyPos = body->GetPosition();
-    bodyPos *= (float) (settings->scale);
+    bodyPos *= (float) (settings.scale);
     return Vector2f(bodyPos.x, bodyPos.y);
 }

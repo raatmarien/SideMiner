@@ -15,29 +15,24 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include <player.h>
 
-#include <SFML/Graphics.hpp> // For using the correct vectors
-#include <Box2D/Box2D.h>
+using namespace sf;
 
-#include <iostream>
+void Player::initialize(PlayerSettings settings, b2World *world) {
+    texture = settings.texture;
+    sprite.setTexture(*texture);
+    setOrigin(settings.walkerSettings.size / 2.0f);
 
-struct WalkerSettings {
-    sf::Vector2f size;
-    float speed;
-    float jumpStrength;
-    int scale;
-};
+    walker = new Walker(settings.startPosition
+                        , settings.walkerSettings, world);
+}
 
-class Walker {
-public:
-    Walker(sf::Vector2f startPosition, WalkerSettings settings
-           , b2World *world);
-    void walk(bool right);
-    void jump();
-    sf::Vector2f getPosition();
-private:
-    b2World *world;
-    b2Body *body;
-    WalkerSettings settings;
-};
+void Player::update() {
+    setPosition(walker->getPosition());
+}
+
+void Player::draw(RenderTarget &target, RenderStates states) const {
+    states.transform *= getTransform();
+    target.draw(sprite, states);
+}

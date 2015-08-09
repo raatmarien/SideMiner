@@ -17,27 +17,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include <SFML/Graphics.hpp> // For using the correct vectors
+#include <SFML/Graphics.hpp>
 #include <Box2D/Box2D.h>
+
+#include <walker.h>
 
 #include <iostream>
 
-struct WalkerSettings {
-    sf::Vector2f size;
-    float speed;
-    float jumpStrength;
-    int scale;
+struct PlayerSettings {
+    WalkerSettings walkerSettings;
+    sf::Texture *texture;
+    sf::Vector2f startPosition;
 };
 
-class Walker {
+class Player
+: public sf::Transformable
+, public sf::Drawable {
 public:
-    Walker(sf::Vector2f startPosition, WalkerSettings settings
-           , b2World *world);
-    void walk(bool right);
-    void jump();
-    sf::Vector2f getPosition();
+    void initialize(PlayerSettings settings, b2World *world);
+    void update();
+    Walker *walker;
 private:
-    b2World *world;
-    b2Body *body;
-    WalkerSettings settings;
+    sf::Texture *texture;
+    sf::Sprite sprite;
+
+    virtual void draw(sf::RenderTarget &target
+                      , sf::RenderStates states) const;
 };

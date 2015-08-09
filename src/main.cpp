@@ -21,12 +21,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <chunk.h>
 #include <chunkManager.h>
+#include <player.h>
+#include <walker.h>
 
 #define SCALE 48
 
 using namespace sf;
 
 void loadFiles();
+
+void setupChunkManager();
+void setupPlayer();
+
 void setWorldBoundaries(int width, int depth);
 
 void handleEvents(RenderWindow *window);
@@ -41,10 +47,12 @@ int worldSizeX, worldSizeY;
 
 // Textures
 Texture blocksTexture;
+Texture playerTexture;
 
 // Game objects
 View view;
 ChunkManager chunkManager;
+Player player;
 
 // Box2D settings
 b2Vec2 gravity(0.0f, 20.0f);
@@ -64,28 +72,8 @@ int main() {
 
     srand(time(NULL));
 
-    // Setup world
-
-
-    ChunkSettings chunkSettings;
-    chunkSettings.chunkSize = Vector2i(64, 64);
-    chunkSettings.tileSize = Vector2i(16, 16);
-    chunkSettings.tileTexSize = Vector2f(16, 16);
-    chunkSettings.tilesPerWidthTex = 4;
-    chunkSettings.scale = SCALE;
-    chunkSettings.world = &world;
-
-    WorldSettings worldSettings;
-    worldSettings.worldSize = Vector2i(8, 4);
-    worldSettings.chunkTexture = &blocksTexture;
-    worldSettings.chunkSettings = chunkSettings;
-
-
-    worldSizeX = chunkSettings.chunkSize.x * chunkSettings.tileSize.x * worldSettings.worldSize.x;
-    worldSizeY = chunkSettings.chunkSize.y * chunkSettings.tileSize.y * worldSettings.worldSize.y;
-
-    // Setup ChunkManager
-    chunkManager.initialize(worldSettings);
+    setupChunkManager();
+    setupPlayer();
 
     int framesForFps = -1;
     fpsTimer.restart();
@@ -129,29 +117,30 @@ void handleInput(RenderWindow *window) {
     }
 
     // Keyboard input
-    float viewMove = 30.0f;
     if (Keyboard::isKeyPressed(Keyboard::W)
         || Keyboard::isKeyPressed(Keyboard::Up)) {
-        view.move(0, -viewMove);
+        player.walker->jump();
     }
     if (Keyboard::isKeyPressed(Keyboard::Space)) {
+        player.walker->jump();
     }
     if (Keyboard::isKeyPressed(Keyboard::S)
         || Keyboard::isKeyPressed(Keyboard::Down)) {
-        view.move(0, viewMove);
     }
     if (Keyboard::isKeyPressed(Keyboard::A)
         || Keyboard::isKeyPressed(Keyboard::Left)) {
-        view.move(-viewMove, 0);
+        player.walker->walk(false);
     }
     if (Keyboard::isKeyPressed(Keyboard::D)
         || Keyboard::isKeyPressed(Keyboard::Right)) {
-        view.move(viewMove, 0);
+        player.walker->walk(true);
     }
 }
 
 void update(RenderWindow *window) {
     chunkManager.update(&view);
+    player.update();
+    view.setCenter(player.getPosition());
 }
 
 void simulatePhysics() {
@@ -164,11 +153,48 @@ void draw(RenderWindow *window) {
     window->setView(view);
     window->clear(Color(143, 178, 255));
     chunkManager.draw(window);
+    window->draw(player);
     window->display();
 }
 
 void loadFiles() {
     blocksTexture.loadFromFile("sprites/blocksTexture.png");
+    playerTexture.loadFromFile("sprites/player.png");
+}
+
+void setupChunkManager() {
+    ChunkSettings chunkSettings;
+    chunkSettings.chunkSize = Vector2i(64, 64);
+    chunkSettings.tileSize = Vector2i(16, 16);
+    chunkSettings.tileTexSize = Vector2f(16, 16);
+    chunkSettings.tilesPerWidthTex = 4;
+    chunkSettings.scale = SCALE;
+    chunkSettings.world = &world;
+
+    WorldSettings worldSettings;
+    worldSettings.worldSize = Vector2i(160, 80);
+    worldSettings.chunkTexture = &blocksTexture;
+    worldSettings.chunkSettings = chunkSettings;
+
+
+    worldSizeX = chunkSettings.chunkSize.x * chunkSettings.tileSize.x * worldSettings.worldSize.x;
+    worldSizeY = chunkSettings.chunkSize.y * chunkSettings.tileSize.y * worldSettings.worldSize.y;
+
+    chunkManager.initialize(worldSettings);
+}
+
+void setupPlayer() {
+    PlayerSettings playerSettings;
+
+    playerSettings.walkerSettings.size = Vector2f(28, 48);
+    playerSettings.walkerSettings.speed = 30.0f;
+    playerSettings.walkerSettings.jumpStrength = 50.0f;
+    playerSettings.walkerSettings.scale = SCALE;
+
+    playerSettings.texture = &playerTexture;
+    playerSettings.startPosition = Vector2f(0, 0);
+
+    player.initialize(playerSettings, &world);
 }
 
 void setWorldBoundaries(int width, int depth) {
